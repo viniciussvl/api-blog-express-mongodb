@@ -1,48 +1,52 @@
+const AuthController = require('../controllers/AuthController');
 const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
 
-router.post('/login', async (req, res) => {
-    const {name, email, password, confirmPassword} = req.body;
-
-
-    try {
-        console.log(req.body);
-    } catch(error) {
-        console.log(error);
-    }
-})
+const authController = new AuthController();
 
 router.post(
-    '/register',
+    '/login',
     body('email').isEmail(),
     body('password').isLength({ min: 6, max: 150 }),
-    body('confirmPassword').custom((value, {req}) => {
-        if(value !== req.body.password) {
-            throw new Error('A confirmação da senha está errada')
-        }
-
-        return true;
-    }),
-    body('name').isLength({min: 3, max: 100}),
     async (req, res) => {
+        const {email, password} = req.body;
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array()} );
         }
 
-        const {name, email, password, confirmPassword} = req.body;
+        try {
+            const token = await authController.login(email, password);
+            res.status(200).json({ message: 'Autenticado com sucesso', token: token });
+        } catch(error) {
+            res.status(error.statusCode).json({ error: error.message })
+        }
+})
 
-        const data = {
-            name,
-            email,
-            password,
-            confirmPassword
+router.post(
+    '/register',
+    body('email').isEmail(),
+    body('name').isLength({min: 3, max: 100}),
+    body('password').isLength({ min: 6, max: 150 }),
+    body('confirmPassword').custom((value, {req}) => {
+        if(value !== req.body.password) {
+            throw new Error('A confirmação da senha está errada')
+        }
+        return true;
+    }),
+    async (req, res) => {
+        const {name, email, password} = req.body;
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array()} );
         }
 
         try {
-            console.log(req.body);
+            await authController.register(name, email, password);
+            res.status(201).json({message: 'Usuario cadastrado com sucesso'});
         } catch(error) {
             console.log(error);
+            res.status(error.statusCode).json({error: error.message});
         }
 })
 

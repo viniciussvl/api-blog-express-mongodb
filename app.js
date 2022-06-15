@@ -11,16 +11,17 @@ app.use(express.json());
 const auth = require('./src/routes/auth');
 app.use('/auth', auth);
 
+const user = require('./src/routes/users');
+app.use('/users', user);
+
 
 app.get('/', (req, res) => {
     res.status(200).json({message: 'funcionando'});
 });
 
-
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const dbName = process.env.DB_NAME;
-
 
 mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@${dbName}.knwqpw3.mongodb.net/?retryWrites=true&w=majority`)
 .then(() => {
