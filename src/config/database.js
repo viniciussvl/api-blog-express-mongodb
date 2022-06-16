@@ -1,12 +1,10 @@
-require('dotenv').config();
-
 const mongoose = require('mongoose');
 
 const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
+const dbPassword = process.env.DB_PASS;
 const dbName = process.env.DB_NAME;
 
-const start = function() {
+const connect = function() {
     mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@${dbName}.knwqpw3.mongodb.net/?retryWrites=true&w=majority`)
     .then(() => {
         console.log('Conectado ao MongoDB');
@@ -16,6 +14,17 @@ const start = function() {
     })
 }
 
+const disconnect = function() {
+    mongoose.disconnect()
+    .then(() => {
+        console.log('MongoDB desconectado');
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+}
+
 module.exports = {
-    start
+    connect,
+    disconnect
 }

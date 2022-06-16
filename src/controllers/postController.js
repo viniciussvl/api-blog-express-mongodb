@@ -4,7 +4,7 @@ const slugify = require('../helpers/slugify');
 const index = async (req, res) => {
     try {
         const posts = await Post.find({ status: true }).sort({ createdAt: 'desc' }).exec();
-        res.status(200).json({posts: posts})
+        res.status(200).json(posts)
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' })
     }
