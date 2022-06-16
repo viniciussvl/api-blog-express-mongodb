@@ -12,13 +12,9 @@ const index = async (req, res) => {
 
 const show = async (req, res) => {
     const id = req.params.id;
-    const userId = req.userId;
 
     try {
-        const post = await Post.findOne({ _id: id })
-        .where('authorId').equals(userId)
-        .exec();
-
+        const post = await Post.findById(id);
         if(!post) {
             res.status(404).json({ message: 'Post not found' })
             return;
@@ -73,9 +69,40 @@ const destroy = async (req, res) => {
     }
 }
 
+const update = async (req, res) => {
+    const id = req.params.id;
+    const {title, content, categoryId, status} = req.body;
+    const slug = slugify(title);
+    const userId = req.userId;
+
+    try {
+        const postExists = await Post.findOne({ _id: id, authorId: userId  });
+        if(!postExists) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        } 
+
+        const postUpdated = await Post.updateOne({ _id: id }, {
+            title,
+            slug,
+            content,
+            categoryId,
+            status,
+        })
+
+        if(postUpdated.matchedCount > 0) {
+            res.status(201).json({ message: 'Post updated successfully' })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
 module.exports = {
     show,
     index,
     store,
+    update,
     destroy
 }

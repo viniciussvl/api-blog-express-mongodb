@@ -37,11 +37,41 @@ const store = async (req, res) => {
 }
 
 const destroy = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const categoryExists = await Category.findById(id);
+        if(!categoryExists) {
+            res.status(404).json({ message: 'Category not found' });
+            return;
+        }
 
+        const categoryDeleted = await Category.deleteOne({ _id: id });
+        if(categoryDeleted.deletedCount > 0) {
+            res.status(200).json({ message: 'Category deleted successfully' });
+        }
+    } catch (error) {
+        res.status(500).json({message: 'Internal server error'});
+    }
 }
 
 const update = async (req, res) => {
+    const id = req.params.id;
+    const name = req.body.name;
 
+    try {
+        const categoryExists = await Category.findById(id);
+        if(!categoryExists) {
+            res.status(404).json({ message: 'Category not found' });
+            return;
+        }
+
+        const categoryUpdated = await Category.updateOne({ _id: id }, { name: name });
+        if(categoryUpdated.matchedCount > 0) {
+            res.status(201).json({ message: 'Category updated successfully' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
 }
 
 module.exports = {

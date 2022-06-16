@@ -9,12 +9,8 @@ exports.postValidator = [
     .custom(async (value) => {
         try {
             const category = await Category.findById(value);
-            if(!category) {
-                throw new Error('Category not found');
-            }
-            
         } catch (error) {
-            throw new Error('Unexpected error');
+            throw new Error('Category not found');
         }
 
         return true;
