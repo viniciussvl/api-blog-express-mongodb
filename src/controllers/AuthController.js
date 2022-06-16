@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
  * @param {Object} req Required request object 
  * @param {Object} res Required response object
  * @returns 
- * The response object with the status and authentication token
+ * The response object with the status and authentication token,
  */
 const login = async (req, res) => {
     const {email, password} = req.body;

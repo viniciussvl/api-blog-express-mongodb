@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
-
-const Post = mongoose.model('Post', {
+const postSchema = new mongoose.Schema(
+{
     title: String,
     slug: String,
     content: String,
     status: String,
     approved: Boolean,
-    createdAt: Date,
-    updatedAt: Date,
     authorId: String,
     categoryId: String
-})
+},
+{ timestamps: true })
+
+const Post = mongoose.model('Post', postSchema)
 
 module.exports = Post;
