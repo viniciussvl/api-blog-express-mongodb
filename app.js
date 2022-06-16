@@ -2,18 +2,17 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const app = express();
 app.use(express.json());
 
-// routes
-const auth = require('./src/routes/auth');
-app.use('/auth', auth);
+// Routes
+const authRoutes = require('./src/routes/authRoutes');
+const usersRoutes = require('./src/routes/usersRoutes');
+const postsRoutes = require('./src/routes/postsRoutes');
 
-const user = require('./src/routes/users');
-app.use('/users', user);
-
+app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
+app.use('/posts', postsRoutes);
 
 app.get('/', (req, res) => {
     res.status(200).json({message: 'funcionando'});

@@ -1,21 +1,14 @@
-const Controller = require('./Controller');
 const User = require('../models/User');
-const CustomException = require('../exceptions/CustomException');
 
-class UserController extends Controller {
-
-    async show(id) {
-        try {
-            const user = await User.findById(id, '-password');
-            return user;
-        } catch (error) {
-            throw new CustomException('usuario nao encontrado', 404);
-        }
-    }
-
-    async deleteAccount() {
-
+const show = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id, '-password');
+        return res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
 
-module.exports = UserController;
+module.exports = {
+    show
+};

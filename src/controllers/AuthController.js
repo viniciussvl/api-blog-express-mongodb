@@ -1,38 +1,21 @@
-const Controller = require('./Controller');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const CustomException = require('../exceptions/CustomException');
 
-class AuthController extends Controller {
+const login = async (req, res) => {
+    const {email, password} = req.body;
 
-    async register(name, email, password) {
-        const userExists = await User.findOne({ email: email });
-        if(userExists) {
-            throw new CustomException('Usuário já existe.', 404);
-        }
-
-        const salt = await bcrypt.genSalt(12);
-        const passwordHash = await bcrypt.hash(password, salt);
-        
-        try {
-            const user = new User({ name, email, password: passwordHash });
-            await user.save();
-        } catch(error) {
-            console.log(error);
-            throw new CustomException('nao foi possivel criar usuario');
-        }
-    }
-
-    async login(email, password) {
+    try {
         const user = await User.findOne({ email: email })
         if(!user) {
-            throw new CustomException('usuario nao encontrado', 404);
+            res.status(404).json({ error: 'User not found' });
+            return;
         }
 
         const checkPassword = await bcrypt.compare(password, user.password);
         if(!checkPassword) {
-            throw new CustomException('Senha incorreta', 401);
+            res.status(401).json({ error: 'Incorrect password' });
+            return;
         }
 
         const secret = process.env.SECRET;
@@ -43,9 +26,35 @@ class AuthController extends Controller {
             secret
         )
 
-        return token;
+        res.status(200).json({ message: 'Successfully logged in', token: token });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal server error' });
     }
-
 }
 
-module.exports = AuthController;
+const register = async (req, res) => {
+    const {name, email, password} = req.body;
+
+    try {
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(password, salt);
+        
+        try {
+            const user = new User({ name, email, password: passwordHash });
+            await user.save();
+        } catch(error) {
+            console.log(error);
+            throw new CustomException('nao foi possivel criar usuario');
+        }
+
+        res.status(201).json({message: 'Usuario cadastrado com sucesso'});
+    } catch(error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+module.exports = {
+    login,
+    register
+}
