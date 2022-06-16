@@ -2,6 +2,15 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
+/**Validates the user's email and password 
+ * to create an authentication token
+ * 
+ * @param {Object} req Required request object 
+ * @param {Object} res Required response object
+ * @returns 
+ * The response object with the status and authentication token
+ */
 const login = async (req, res) => {
     const {email, password} = req.body;
 
@@ -33,20 +42,20 @@ const login = async (req, res) => {
     }
 }
 
+/** Create a new user in the database and generate a hash with salt
+ * 
+ * @param {Object} req Required request object
+ * @param {Object} res Required response object
+ * @returns A success message if you were able to create the user
+ */
 const register = async (req, res) => {
     const {name, email, password} = req.body;
 
     try {
         const salt = await bcrypt.genSalt(12);
         const passwordHash = await bcrypt.hash(password, salt);
-        
-        try {
-            const user = new User({ name, email, password: passwordHash });
-            await user.save();
-        } catch(error) {
-            console.log(error);
-            throw new CustomException('nao foi possivel criar usuario');
-        }
+        const user = new User({ name, email, password: passwordHash });
+        await user.save();
 
         res.status(201).json({message: 'Usuario cadastrado com sucesso'});
     } catch(error) {

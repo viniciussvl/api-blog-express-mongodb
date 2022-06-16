@@ -8,7 +8,12 @@ const index = async (req, res) => {
 
 }
 
+const store = async (req, res) => {
+
+}
+
 module.exports = {
     show,
-    index
+    index,
+    store
 }
