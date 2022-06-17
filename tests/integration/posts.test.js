@@ -14,13 +14,6 @@ describe('posts', () => {
         database.connect();
     })
 
-    afterAll(() => {
-        database.disconnect();
-    })
-
-    // MOCKAR TOKEN JWT OU PEGAR ELE
-    // TA DANDO ERRO 401 NAO AUTORIZADO
-
     it('should return the post created payload', async (done) => {
         const response = await request(app).post('/posts').send(postInput);
         expect(response.statusCode).toBe(200);
