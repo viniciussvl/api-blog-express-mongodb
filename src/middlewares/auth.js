@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 
 const Authentication = async function(req, res, next) {
-    const id = req.params.id;
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if(!token) {
@@ -9,11 +8,9 @@ const Authentication = async function(req, res, next) {
     }
 
     try {
-        const secret = process.env.SECRET;        
+        const secret = process.env.JWT_SECRET;        
         const decoded = await jwt.verify(token, secret);
-        if(decoded.id !== id) {
-            throw new Error("Token inválido");
-        }
+        req.userId = decoded.id;
 
         next();
     } catch(error) {
