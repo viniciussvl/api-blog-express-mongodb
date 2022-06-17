@@ -27,7 +27,7 @@ const login = async (req, res) => {
             return;
         }
 
-        const secret = process.env.SECRET;
+        const secret = process.env.JWT_SECRET;
         const token = jwt.sign(
             {
                 id: user._id,
