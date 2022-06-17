@@ -8,7 +8,7 @@ exports.loginValidator = [
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
-            return res.status(422).json({ errors: formatValidatorErrors.common(errors) });
+            return res.status(422).json({ errors: formatValidatorErrors.common(errors.array()) });
         }
 
         next();
