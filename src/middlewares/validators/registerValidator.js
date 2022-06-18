@@ -10,9 +10,9 @@ exports.registerValidator = [
             throw new Error('User already exists');
         }
     }),
-    check('name').isLength({ min: 3, max: 100 }),
-    check('password').isLength({ min: 3, max: 150 }),
-    check('confirmPassword').custom((value, {req}) => {
+    check('name').isString().isLength({ min: 3, max: 100 }),
+    check('password').isString().isLength({ min: 3, max: 150 }),
+    check('confirmPassword').isString().custom((value, {req}) => {
         if(value !== req.body.password) {
             throw new Error('wrong confirm password');
         }

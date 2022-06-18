@@ -3,8 +3,8 @@ const formatValidatorErrors = require('../../helpers/formatValidatorErrors');
 const Category = require('../../models/Category');
 
 exports.postValidator = [
-    check('title').isLength({ min: 6, max: 150 }),
-    check('content').isLength({ min: 6 }).withMessage('Mininum length is 6'),
+    check('title').isString().isLength({ min: 6, max: 150 }),
+    check('content').isString().isLength({ min: 6 }).withMessage('Mininum length is 6'),
     check('categoryId').isMongoId().withMessage('Invalid category id').bail()
     .custom(async (value) => {
         try {

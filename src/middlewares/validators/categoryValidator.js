@@ -2,7 +2,7 @@ const { check, validationResult } = require('express-validator');
 const formatValidatorErrors = require('../../helpers/formatValidatorErrors');
 
 exports.categoryValidator = [
-    check('name')
+    check('name').isString()
     .notEmpty().withMessage('Name is required')
     .bail()
     .isLength({ min: 3, max: 150 }).withMessage('Characters must be between 3 and 150'),
